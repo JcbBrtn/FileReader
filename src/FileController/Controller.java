@@ -28,14 +28,14 @@ public class Controller {
     //Breaks file into paragraphs, that go to sentences, that go to words.
     ArrayList<String> paragraphs = new ArrayList();
     ArrayList<String> sentences = new ArrayList();
-    ArrayList<String> words = new ArrayList();
+    ArrayList<Word> words = new ArrayList();
+    boolean canRun = true;
     
     public Controller(){
         //Read in file and split it into an arrayList of paragraphs.
         File file = new File("passage");
         try{
             Scanner sc = new Scanner(file);
-            
             while(sc.hasNextLine()){
                 //scan through each line of test
                 String line = sc.nextLine();
@@ -48,11 +48,22 @@ public class Controller {
                     paragraphs.add(line);
                 }//end else
             } //End While loop
-        }
+        }//End try block
         catch(Exception e){
             System.out.println("There was an error reading the file.");
-        }
+            canRun = false;
+        }//End catch block
     }//end Constructor
+    
+    public void PrintTotalWordCount(){
+        //go through words, add up all word counts of each word to get total.
+        int totalWordCount = 0;
+        for(int i = 0; i<words.size(); i++){
+            totalWordCount += words.get(i).count;
+        }
+        System.out.println("Total Word Count of File: "
+                + Integer.toString(totalWordCount) + "\n");
+    }
     
     public void FillWords(){
         //Split Sentence Array into an array of words and fill words ArrayList.
@@ -64,22 +75,44 @@ public class Controller {
             
             for(int j = 0; j<untrimmedWordArray.length; j++){
                 trimmedWord = TrimWord(untrimmedWordArray[j]);
+                AddToWordList(trimmedWord);
             }
         }
     }//end FillWords()
     
+    public void AddToWordList(String word){
+        //Check to see if word is in WordList, if not, add it
+        //If word is in WordList, increase word count by 1
+        for(int i = 0; i < words.size(); i++){
+            if(words.get(i).wordName.equals(word)){
+                words.get(i).IncrementCount();
+                return;
+            }
+        }//end words iteration.
+        //If word is not in words, then add it to words.
+        words.add(new Word(word));        
+    }
+    
     public String TrimWord(String word){
         //'Trims' words to remove punctuation that split/trim method wont remove.
-        word = word.trim().toLowerCase();
+        String trimmedWord = word.trim().toLowerCase();
         char[] punctuation = {'.',',',':',';','\n','\'','(',')'};
-        char wordStart = word.charAt(0);
-        char wordEnd = word.charAt(word.length());
+        char wordStart = trimmedWord.charAt(0);
+        char wordEnd = trimmedWord.charAt(word.length());
         
         for(int i = 0; i<punctuation.length;i++){
             //Go through Char[] of punctuation and compare start and end values
             //of word to them. Remove those if they equal.
-        }
-        return word;
+            if(wordStart == punctuation[i]){
+                //If word starts with punctuation, get rid of punctuation.
+                trimmedWord = word.substring(1, word.length());
+            }//end of Starting Char comparison.
+            if(wordEnd == punctuation[i]){
+                //If word ends with punctuation, get rid of punctuation.
+                trimmedWord = word.substring(0, word.length() - 1);
+            }//end of End Char Comparison.
+        }//end for loop for punctuations.
+        return trimmedWord;
     } //end TrimWord()
     
     public void FillSentences(){
@@ -98,19 +131,26 @@ public class Controller {
     
     public void Run(){
         //Runs all the Controller Commands. Call this in main() to get output
-        FillSentences();
-        FillWords();
+        //Does not run if an exception was thrown in the Constructor
+        if(canRun){
+            FillSentences();
+            FillWords();
+
+            //Print outputs to the console.
+            PrintTotalWordCount();
+            GetTopTenWords();
+            System.out.println("\n");
+            GetLastSentence();
+        }
+        else{
+            System.out.println("Sorry, unable to run the program.");
+        }
     }//end Run
     
     public static void main(String[] args) {
        Controller Main = new Controller();
-       
-       
-       //Test Stuffz.
-       String test = "Moovie.";
-       System.out.println(test.substring(0, test.length()-1));
-        System.out.println(test.substring(test.length() - 1, test.length()));
-       //Delete This.
+       Main.Run();
+
     }//end main Method
     
 }
