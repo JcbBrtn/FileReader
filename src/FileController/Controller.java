@@ -25,7 +25,7 @@ import java.util.Scanner;
 
 
 public class Controller {
-    //This Class reads in a file and runs manipulations on it.
+    //This Class reads in a file and preforms string manipulations on it.
     //Breaks file into paragraphs, that go to sentences, that go to words.
     private ArrayList<String> paragraphs = new ArrayList();
     private ArrayList<String> sentences = new ArrayList();
