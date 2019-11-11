@@ -16,36 +16,36 @@ public class Word {
         wordName = Name;
         count = 1;
         placement = 0;
-    }
+    }//End of constructor
     
     public void IncrementCount(){
         //Add 1 to count.
         count++;
-    }
+    }//end of incrememntCount()
     
-    public void setPlacement(int place){
+    public void SetPlacement(int place){
         //sets rankings of word useage.
         placement = place;
-    }
+    }//end of setPlacement
     
+    @Override
     public String toString(){
         String out = "";
         out += Integer.toString(placement);
         out += ": " + wordName + " (";
         out += Integer.toString(count) + ")";
         return out;
-    }
+    }//end of toString()
     
     //Getters
     public String GetWordName(){
         return wordName;
-    }
+    }//end of GetWordName()
     
     public int GetCount(){
         return count;
-    }
+    }//end of GetCount()
     public int GetPlacement(){
         return placement;
-    }
-    
-}
+    }//end of GetPlacement
+}//End of Words class

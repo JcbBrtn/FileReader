@@ -1,6 +1,7 @@
 package FileController;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -102,13 +103,14 @@ public class Controller {
     }//end PrintTotalWordCount
     
     public void SetWordPlacement(){
-        //sets the word class placememnt variable by useage of the words.
+        //sets the word class placememnt variable by usage of the words.
         //1 is most used, words.size() is least used word.
+        //base is array so ties will be same placement.
         ArrayList<Word> base = new ArrayList<>();
         int baseNum = 0;
         int placeNum = 1;
         while(WordsNeedPlaced()){
-            //Start at top of words list, and make our way down finding max wordCount
+            //Start at top of words list, and make our way down finding largest wordCount
             //Then keep going finding 2nd highest, until we complete the list
             base.clear();
             Word baseWord = GetNextBase();
@@ -133,7 +135,7 @@ public class Controller {
                 }//end of base comparison
             }//End of For Loop
             for(int baseNumber = 0; baseNumber < base.size(); baseNumber++){
-                base.get(baseNumber).setPlacement(placeNum);
+                base.get(baseNumber).SetPlacement(placeNum);
             }
             //Add placeNum by size so if tie, Then only 10 words get displayed.
             placeNum += base.size();
@@ -144,8 +146,8 @@ public class Controller {
         for(int i = 0; i<words.size();i++){
             if(words.get(i) == base){
                 return i;
-            }
-        }
+            }//end base checker
+        }//end for loop
         return 0;
     }//End GetBaseNum()
     
@@ -153,7 +155,7 @@ public class Controller {
         for(int i = 0; i<words.size(); i++){
             if(words.get(i).GetPlacement() == 0){
                 return words.get(i);
-            }
+            }//end placemment checker
         }//end for loop
         //This will placehold the system until it gets set back on track.
         return new Word("Oh Hai");
@@ -165,8 +167,8 @@ public class Controller {
         for(int i = 0; i< words.size();i++){
             if(words.get(i).GetPlacement() == 0){
                 needPlaced = true;
-            }
-        }
+            }//end base checker
+        }//end for loop
         return needPlaced;
     }//End WordsNeedPlaced
     
@@ -202,7 +204,7 @@ public class Controller {
             if(words.get(i).GetWordName().equals(word)){
                 words.get(i).IncrementCount();
                 return;
-            }
+            }//end words checker
         }//end words iteration.
         //If word is not in words, then add it to words.
         words.add(new Word(word));        
