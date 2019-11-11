@@ -26,14 +26,14 @@ import java.util.Scanner;
 public class Controller {
     //This Class reads in a file and runs manipulations on it.
     //Breaks file into paragraphs, that go to sentences, that go to words.
-    ArrayList<String> paragraphs = new ArrayList();
-    ArrayList<String> sentences = new ArrayList();
-    ArrayList<Word> words = new ArrayList();
-    boolean canRun = true;
+    private ArrayList<String> paragraphs = new ArrayList();
+    private ArrayList<String> sentences = new ArrayList();
+    private ArrayList<Word> words = new ArrayList();
+    private boolean canRun = true;
     
     public Controller(){
         //Read in file and split it into an arrayList of paragraphs.
-        File file = new File("passage");
+        File file = new File("passage.txt");
         try{
             Scanner sc = new Scanner(file);
             while(sc.hasNextLine()){
@@ -54,15 +54,41 @@ public class Controller {
             canRun = false;
         }//End catch block
     }//end Constructor
+    public void GetLastSentence(){
+        return;
+    }
+    public void GetTopTenWords(){
+        return;
+    }
     
     public void PrintTotalWordCount(){
         //go through words, add up all word counts of each word to get total.
         int totalWordCount = 0;
         for(int i = 0; i<words.size(); i++){
-            totalWordCount += words.get(i).count;
+            totalWordCount += words.get(i).GetCount();
         }
         System.out.println("Total Word Count of File: "
                 + Integer.toString(totalWordCount) + "\n");
+    }
+    
+    public void SetWordPlacement(){
+        //sets the word class placememnt variable by useage of the words.
+        //1 is most used, words.size() is least used word.
+        ArrayList<Word> base = new ArrayList<>();
+        for(int place = 0; place<words.size();place++){
+            //Start at top of words list, and make our way down finding max wordCount
+            //Then keep going finding 2nd highest, until we complete the list
+            base.add(words.get(place));
+            for(int j = 0; j<words.size(); j++){
+                //Iterate over the rest of the words list looking for words
+                //with higher or equal word count, skipping over the ones w/ placements
+                if(base.get(0).GetWordName().equals(words.get(j).GetWordName())
+                        || words.get(j).GetPlacement() != 0){
+                    //Skip over the word your comparing and words already placed.
+                    continue;
+                }
+            }
+        }
     }
     
     public void FillWords(){
@@ -74,6 +100,11 @@ public class Controller {
             untrimmedWordArray = sentences.get(i).split(" ");
             
             for(int j = 0; j<untrimmedWordArray.length; j++){
+                if(untrimmedWordArray[j].equals("\n")){
+                    //Write out special cases
+                    continue;
+                }
+                else if(untrimmedWordArray[j].length() == 1)
                 trimmedWord = TrimWord(untrimmedWordArray[j]);
                 AddToWordList(trimmedWord);
             }
@@ -84,32 +115,34 @@ public class Controller {
         //Check to see if word is in WordList, if not, add it
         //If word is in WordList, increase word count by 1
         for(int i = 0; i < words.size(); i++){
-            if(words.get(i).wordName.equals(word)){
+            if(words.get(i).GetWordName().equals(word)){
                 words.get(i).IncrementCount();
                 return;
             }
         }//end words iteration.
         //If word is not in words, then add it to words.
         words.add(new Word(word));        
-    }
+    }//End AddToWordList()
     
     public String TrimWord(String word){
         //'Trims' words to remove punctuation that split/trim method wont remove.
         String trimmedWord = word.trim().toLowerCase();
         char[] punctuation = {'.',',',':',';','\n','\'','(',')'};
+        //String punctuation = ".,:;\n";
         char wordStart = trimmedWord.charAt(0);
+        //String wordStart = trimmedWord.substring(0,1);
         char wordEnd = trimmedWord.charAt(word.length());
-        
+        //String wordEnd = trimmedWord.substring(trimmedWord.length()-1, trimmedWord.length());
         for(int i = 0; i<punctuation.length;i++){
             //Go through Char[] of punctuation and compare start and end values
             //of word to them. Remove those if they equal.
             if(wordStart == punctuation[i]){
                 //If word starts with punctuation, get rid of punctuation.
-                trimmedWord = word.substring(1, word.length());
+                trimmedWord = trimmedWord.substring(1, trimmedWord.length());
             }//end of Starting Char comparison.
             if(wordEnd == punctuation[i]){
                 //If word ends with punctuation, get rid of punctuation.
-                trimmedWord = word.substring(0, word.length() - 1);
+                trimmedWord = trimmedWord.substring(0, trimmedWord.length() - 1);
             }//end of End Char Comparison.
         }//end for loop for punctuations.
         return trimmedWord;
@@ -135,11 +168,11 @@ public class Controller {
         if(canRun){
             FillSentences();
             FillWords();
+            SetWordPlacement();
 
             //Print outputs to the console.
             PrintTotalWordCount();
             GetTopTenWords();
-            System.out.println("\n");
             GetLastSentence();
         }
         else{
