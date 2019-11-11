@@ -1,7 +1,8 @@
 /*
  * This is a class for the words found in the file.
  * This only to help organize the name of the Word,
- * and the total Word count
+ * the total Word count, and rank of each word compared
+ * to all the other words used.
  */
 package FileController;
 
@@ -25,6 +26,14 @@ public class Word {
     public void setPlacement(int place){
         //sets rankings of word useage.
         placement = place;
+    }
+    
+    public String toString(){
+        String out = "";
+        out += Integer.toString(placement);
+        out += ": " + wordName + " (";
+        out += Integer.toString(count) + ")";
+        return out;
     }
     
     //Getters
